@@ -4,7 +4,7 @@ project(rac2_client)
 add_executable(rac2_client main.cpp pine.h)
 
 set(WIN32 ON CACHE BOOL "" FORCE)
-set(MINGW ON CACHE BOOL "" FORCE)
+set(MINGW OFF CACHE BOOL "" FORCE)
 set(USE_ZLIB OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(APCpp)
