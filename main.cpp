@@ -1,8 +1,14 @@
 #include <iostream>
-#include "pine.h"
+
+#include "readerwriterqueue.h"
+#include "pine/pine.h"
+
+using namespace PINE;
+using namespace moodycamel;
 
 int main(int, char**){
-    PINE::PCSX2 *ipc = new PINE::PCSX2();
+    PCSX2 *ipc = new PINE::PCSX2();
+    ReaderWriterQueue<int> q(100);
     
     try {
         std::cout << "PCSX2 version: " << ipc->Version() << "\n";
