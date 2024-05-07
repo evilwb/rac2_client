@@ -8,9 +8,7 @@ add_executable(rac2_client main.cpp)
 
 target_link_libraries(rac2_client pine)
 
-set(WIN32 ON CACHE BOOL "" FORCE)
 set(MINGW OFF CACHE BOOL "" FORCE)
-set(USE_ZLIB OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(APCpp)
 include_directories(APCpp)
