@@ -8,7 +8,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(pine INTERFACE)
 target_include_directories(pine INTERFACE pine/)
 
-add_executable(rac2_client main.cpp)
+add_executable(rac2_client main.cpp rac2_interface.cpp)
 
 target_link_libraries(rac2_client pine)
 
