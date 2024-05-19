@@ -58,6 +58,7 @@ public:
     };
 
     Rac2_interface();
+    bool connect();
     int give_item(Item);
     const std::vector<Item> *list_inventory();
     int display_message(std::string);
@@ -66,6 +67,12 @@ public:
         {1, Item{"Lancer", 0x1A7B16}},
         {2, Item{"Lava Gun", 0x1A7B15}}
     };
+
+    std::string platform;
+    std::string title;
+    std::string id;
+    std::string version;
+    std::string uuid;
 
 private:
     int get_emulator_status();
