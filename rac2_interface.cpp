@@ -1,17 +1,18 @@
 #include "rac2_interface.h"
 
+#include <memory>
+
 #include "address.h"
 #include "pine.h"
 
 using PINE::PCSX2;
 using Rac2::Rac2_interface;
 
-Rac2_interface::Rac2_interface() {
-    ipc = std::make_shared<PCSX2>();
-    platform = "";
-}
+Rac2_interface::Rac2_interface() {}
 
 bool Rac2_interface::connect() {
+    ipc = std::make_shared<PCSX2>();
+
     try {
         // For some reason the Version call only works after PCSX2 starts
         // running a game.
@@ -303,7 +304,7 @@ const std::vector<Rac2_interface::Item> *Rac2_interface::list_inventory() {
 // std::optional<uint8_t*> ipc_read_range(std::shared_ptr<PCSX2> ipc, uint32_t
 // start, uint32_t end) {
 //     assert((int32_t)(end - start) > 0);
-//     //             VVVVV  MUST BE DIVISABLE BY 8!
+//     //             VVVVV  MUST BE DIVISIBLE BY 8!
 //     const int bytes_per_batch = 10000 * 8;
 //     int memory_size = end - start;
 //     int full_batches = memory_size / bytes_per_batch;
@@ -315,7 +316,7 @@ const std::vector<Rac2_interface::Item> *Rac2_interface::list_inventory() {
 
 //     // Read all full batches
 //     for (int i = 0; i < full_batches; i++) {
-//         //printf("\nBatch Nmber: %d\n", i);
+//         //printf("\nBatch Number: %d\n", i);
 //         ipc->InitializeBatch();
 //         for (int j = 0; j < bytes_per_batch; j += 8) {
 //             int offset = i * bytes_per_batch + j;
@@ -328,7 +329,7 @@ const std::vector<Rac2_interface::Item> *Rac2_interface::list_inventory() {
 //         for (int j = 0; j < bytes_per_batch / 8; j++) {
 //             // Since the reply is in 64 bit chunks but we want to store it in
 //             an array of bytes, we create
-//             // a 64 bit pointer to the beinning of the byte array and copy
+//             // a 64 bit pointer to the beginning of the byte array and copy
 //             our 64 bit value into that. uint64_t* ee_mem_64 =
 //             (uint64_t*)ee_memory; ee_mem_64[(i * (bytes_per_batch / 8) + j)]
 //             = ipc->GetReply<PCSX2::MsgRead64>(resr, j);
@@ -349,7 +350,7 @@ const std::vector<Rac2_interface::Item> *Rac2_interface::list_inventory() {
 //     for (int j = 0; j < remainder_batch_size / 8; j++) {
 //         // Since the reply is in 64 bit chunks but we want to store it in an
 //         array of bytes, we create
-//         // a 64 bit pointer to the beinning of the byte array and copy our 64
+//         // a 64 bit pointer to the beginning of the byte array and copy our 64
 //         bit value into that. uint64_t* ee_mem_64 = (uint64_t*)ee_memory;
 //         ee_mem_64[(full_batches * (bytes_per_batch / 8) + j)] =
 //         ipc->GetReply<PCSX2::MsgRead64>(resr, j);
