@@ -91,14 +91,6 @@ bool ap_connect(const std::string address, const std::string slotname,
             // TODO: mark the location with the given id as checked.
         });
 
-        AP_SetUnsuccessfulConnectionCallback([](int64_t retries, AP_ConnectionStatus status) {
-            if (retries > 5) {
-                cout << "Shutting down AP\n";
-                timeout = true;
-            }
-
-        });
-
     AP_Start();
 
     while (!timeout) {}
