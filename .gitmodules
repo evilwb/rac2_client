@@ -1,3 +1,6 @@
 [submodule "readerwriterqueue"]
 	path = readerwriterqueue
 	url = https://github.com/cameron314/readerwriterqueue.git
+[submodule "APCpp"]
+	path = APCpp
+	url = https://github.com/evilwb/APCpp.git
