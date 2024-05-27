@@ -21,5 +21,3 @@ inline std::thread input_reader;
 inline std::unique_ptr<Rac2::Rac2_interface> rac2;
 
 inline bool rac2_connected;
-inline bool ap_connected;
-inline bool timeout;

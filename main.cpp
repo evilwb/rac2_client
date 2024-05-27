@@ -1,6 +1,9 @@
 #include "main.h"
+
+#include <chrono>
 #include <cstdint>
 #include <ostream>
+#include <thread>
 
 #include "Archipelago.h"
 #include "readerwriterqueue.h"
@@ -22,10 +25,7 @@ int main(int, char **) {
     input_reader.detach();
 
     rac2 = make_unique<Rac2_interface>();
-
-    rac2_connected = true;
-    ap_connected = false;
-    timeout = false;
+    rac2_connected = false;
 
     while (true) {
         // Connect to PCSX2
@@ -39,11 +39,12 @@ int main(int, char **) {
                          << ")\n";
                     rac2_connected = true;
 
-                    if (!ap_connected) {
-                        cout << "There is no active multiworld server "
-                                "connection. Connect using command: /connect "
-                                "server:port slotname";
-                        cout << "\n> " << flush;
+                    if (!(AP_IsInit() && AP_GetConnectionStatus() ==
+                                             AP_ConnectionStatus::Connected)) {
+                        printp(
+                            "There is no active multiworld server connection. "
+                            "Connect using command: /connect server:port "
+                            "slotname");
                     }
                 }
             } else {
@@ -58,15 +59,15 @@ int main(int, char **) {
 
             if (tokens[0] == "/help") {
                 // TODO: print command help
-                cout << "Command help coming soon `\\_( ͡° ͜ʖ ͡°)_/¯\n> " << flush;
+                printp("Command help coming soon `\\_( ͡° ͜ʖ ͡°)_/¯");
             } else if (tokens[0] == "/connect" && tokens.size() == 3) {
-                ap_connected = ap_connect(tokens[1], tokens[2]);
+                ap_connect(tokens[1], tokens[2]);
             } else if (tokens[0] == "connect" && tokens.size() == 4) {
-                ap_connected = ap_connect(tokens[1], tokens[2], tokens[3]);
+                ap_connect(tokens[1], tokens[2], tokens[3]);
             } else {
-                cout << "Invalid command. Try using '/help' for a list of "
-                        "valid commands\n> "
-                     << flush;
+                printp(
+                    "Invalid command. Try using '/help' for a list of "
+                    "valid commands");
             }
         }
 
@@ -76,27 +77,36 @@ int main(int, char **) {
 
 bool ap_connect(const std::string address, const std::string slotname,
                 const string password) {
-        AP_Init(address.c_str(), "RAC2", slotname.c_str(), password.c_str());
+    if (AP_IsInit() &&
+        AP_GetConnectionStatus() == AP_ConnectionStatus::Connected) {
+        printp("Already connected to AP server");
+    }
 
-        AP_SetItemClearCallback([]() {
-            // TODO: Clear all item states
-        });
+    AP_Init(address.c_str(), "RAC2", slotname.c_str(), password.c_str());
 
-        AP_SetItemRecvCallback([](int64_t item_id, bool notify) {
-            // TODO: add the item with the given ID to the current state. The
-            // second parameter decides whether or not to notify the player
-        });
+    AP_SetItemClearCallback([]() {
+        // TODO: Clear all item states
+    });
 
-        AP_SetLocationCheckedCallback([](int64_t location_id) {
-            // TODO: mark the location with the given id as checked.
-        });
+    AP_SetItemRecvCallback([](int64_t item_id, bool notify) {
+        // TODO: add the item with the given ID to the current state. The
+        // second parameter decides whether or not to notify the player
+    });
+
+    AP_SetLocationCheckedCallback([](int64_t location_id) {
+        // TODO: mark the location with the given id as checked.
+    });
 
     AP_Start();
 
-    while (!timeout) {}
-    if (AP_GetConnectionStatus() != AP_ConnectionStatus::Connected) {
-        AP_Shutdown();
+    for (int i = 0; i < 5; i++) {
+        if (AP_GetConnectionStatus() == AP_ConnectionStatus::Connected) {
+            return true;
+        }
+        this_thread::sleep_for(chrono::seconds(1));
     }
-    timeout = false;
+
+    printp("Connection to AP server failed. Error: %d", int(AP_GetConnectionStatus()));
+    AP_Shutdown();
     return false;
 }

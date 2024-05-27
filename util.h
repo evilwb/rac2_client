@@ -1,6 +1,9 @@
 #pragma once
 
+#include <cstdarg>
 #include <cstddef>
+#include <cstdio>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -13,4 +16,15 @@ inline const std::vector<std::string> tokenize(const std::string text, const cha
         tokens.push_back(token);
     }
     return tokens;
+}
+
+inline int printp(const char * format, ...) {
+    va_list args;
+    va_start(args, format);
+    
+    printf("\n");
+    int result = vprintf(format, args);
+    printf("\n> ");
+    std::cout << std::flush;
+    return result;
 }
