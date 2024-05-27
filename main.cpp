@@ -1,4 +1,6 @@
 #include "main.h"
+#include <cstdint>
+#include <ostream>
 
 #include "Archipelago.h"
 #include "readerwriterqueue.h"
@@ -23,6 +25,7 @@ int main(int, char **) {
 
     rac2_connected = true;
     ap_connected = false;
+    timeout = false;
 
     while (true) {
         // Connect to PCSX2
@@ -73,7 +76,6 @@ int main(int, char **) {
 
 bool ap_connect(const std::string address, const std::string slotname,
                 const string password) {
-    // if (!AP_IsInit()) {
         AP_Init(address.c_str(), "RAC2", slotname.c_str(), password.c_str());
 
         AP_SetItemClearCallback([]() {
@@ -88,8 +90,21 @@ bool ap_connect(const std::string address, const std::string slotname,
         AP_SetLocationCheckedCallback([](int64_t location_id) {
             // TODO: mark the location with the given id as checked.
         });
-    // }
+
+        AP_SetUnsuccessfulConnectionCallback([](int64_t retries, AP_ConnectionStatus status) {
+            if (retries > 5) {
+                cout << "Shutting down AP\n";
+                timeout = true;
+            }
+
+        });
 
     AP_Start();
+
+    while (!timeout) {}
+    if (AP_GetConnectionStatus() != AP_ConnectionStatus::Connected) {
+        AP_Shutdown();
+    }
+    timeout = false;
     return false;
 }

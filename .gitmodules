@@ -1,6 +1,6 @@
 [submodule "APCpp"]
 	path = APCpp
-	url = https://github.com/N00byKing/APCpp
+	url = https://github.com/evilwb/APCpp.git
 [submodule "readerwriterqueue"]
 	path = readerwriterqueue
 	url = https://github.com/cameron314/readerwriterqueue.git
